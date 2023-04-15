@@ -21,12 +21,20 @@ public class BloomFilter {
 
     /**
      * Creates a new bloom filter.
-     * @param size the size of the bloom filter
-     * @param nrHashFunctions the number of hash functions to use
+     * Formulas for k and m can be found in the slides and a proof can be found here:
+     * https://people.eecs.berkeley.edu/~daw/teaching/cs170-s03/Notes/lecture10.pdf
+     * @param falsePositiveRate the false positive rate of the filter
+     *                          (the probability that a query returns true for a value that was not added to the filter)
+     * @param n an estimation of the number of distinct values to be added to the filter
      */
-    public BloomFilter(int size, int nrHashFunctions) {
-        this.bloomFilter = new boolean[size];
-        this.hashFunctions = new HashUtils().getHashFunctions(nrHashFunctions);
+    public BloomFilter(double falsePositiveRate, int n) {
+        // size of the bloom filter
+        int m = (int) Math.ceil(-n * Math.log(falsePositiveRate) / 0.6185);
+        // number of hash functions
+        int k = (int) Math.ceil(Math.log(2) * m / n);
+
+        this.bloomFilter = new boolean[m];
+        this.hashFunctions = HashUtils.getHashFunctions(k);
     }
 
     /**

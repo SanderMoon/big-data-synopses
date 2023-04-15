@@ -3,8 +3,7 @@ import exponentialhistograms.ExponentialHistogram;
 
 import java.util.Arrays;
 
-import static utils.Utils.generateRandomArray;
-import static utils.Utils.prettyPrintHashMap;
+import static utils.Utils.*;
 
 public class Main {
 
@@ -31,14 +30,32 @@ public class Main {
     }
 
     public static void testBloomFilter(){
-        int[] arrivals = generateRandomArray(1000, 0, 1000);
+        final var falsePositiveRate = 0.01;
+        int mean = 500;
+        int stdDev = 50;
+        // generate random data from a gaussian distribution (just an example)
+        int[] arrivals = generateRandomGaussians(10000, 500, 50);
+
+        // estimate the number of distinct values (definitely not accurate)
+        // We just need some estimation to calculate k and m
+        int estimationOfDistinctValues = estimateNumberOfDistinctValuesFromGaussian(mean, stdDev);
         //randomly insert testing values into the arrivals
-        arrivals[arrivals.length/2] = 1001;
-        final var bloomFilter = new BloomFilter(100, 10);
+        arrivals[arrivals.length/2] = 666666;
+        final var bloomFilter = new BloomFilter(falsePositiveRate, estimationOfDistinctValues);
         for (int arrival : arrivals) {
             bloomFilter.add(arrival);
         }
-        System.out.println("1001 is in the filter: " + bloomFilter.contains(1001));
-        System.out.println("1002 is not in the filter: " + bloomFilter.contains(1002));
+        System.out.println("1001 is in the filter: " + bloomFilter.contains(666666));
+        System.out.println("1002 is not in the filter: " + bloomFilter.contains(777777));
+
+        // calculate the actual false positive rate with fictive numbers outside of our distribution
+        int falsePositives = 0;
+        for (int i = 5000; i < 15000; i++) {
+            if (bloomFilter.contains(i)) {
+                falsePositives++;
+            }
+        }
+        // FPR might be inaccurate, as we don't know the actual number of distinct values, estimation might be off
+        System.out.println("False positive rate: " + (double) falsePositives / 10000);
     }
 }

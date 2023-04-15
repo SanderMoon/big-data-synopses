@@ -3,8 +3,8 @@
 This repository contains a collection of simple implementations of synopses:
 - Exponential histograms
 - Count-min sketches (TODO)
-- Bloom filters (TODO) 
-- Counter bloom filters (TODO)
+- Bloom filters 
+- Counting bloom filters (TODO)
 - Flajolet-Martin sketches (TODO)
 
 Notes:

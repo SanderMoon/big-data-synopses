@@ -1,5 +1,7 @@
 package utils;
 
+import org.apache.commons.math3.distribution.NormalDistribution;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -17,6 +19,16 @@ public class Utils {
         return array;
     }
 
+    public static int[] generateRandomGaussians(int length, float mean, float stdDev) {
+        int[] array = new int[length];
+        Random random = new Random();
+
+        for (int i = 0; i < length; i++) {
+            array[i] = (int) (random.nextGaussian() * stdDev + mean);
+        }
+        return array;
+    }
+
     public static <K, V> String prettyPrintHashMap(HashMap<K, V> map) {
         StringBuilder sb = new StringBuilder();
         sb.append("{\n");
@@ -25,6 +37,12 @@ public class Utils {
         }
         sb.append("}");
         return sb.toString();
+    }
+
+    public static int estimateNumberOfDistinctValuesFromGaussian(double mean, double stdDev) {
+        double lowerBound = mean - 4 * stdDev;
+        double upperBound = mean + 4 * stdDev;
+        return (int) (upperBound - lowerBound + 1);
     }
 
 
