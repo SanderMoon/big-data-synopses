@@ -1,5 +1,6 @@
 import bloomfilters.BloomFilter;
 import bloomfilters.CountingBloomFilter;
+import cuckoofilters.CuckooFilter;
 import exponentialhistograms.ExponentialHistogram;
 
 import java.util.Arrays;
@@ -10,8 +11,48 @@ public class Main {
 
     public static void main(String[] args) {
         //testExponentialHistograms();
-        testBloomFilter();
+        //testBloomFilter();
         //testCountingBloomFilter();
+        testCuckooFilter();
+    }
+
+    private static void testCuckooFilter() {
+        final var falsePositiveRate = 0.001;
+        int mean = 500;
+        int stdDev = 50;
+        // generate random data from a gaussian distribution (just an example)
+        int[] arrivals = generateRandomGaussians(10000, 500, 50);
+        int estimationOfDistinctValues = estimateNumberOfDistinctValuesFromGaussian(mean, stdDev);
+        // or use int actualNumberOfDistinctValues = (int) Arrays.stream(arrivals).distinct().count();
+
+        final var cuckooFilter = new CuckooFilter(falsePositiveRate, estimationOfDistinctValues);
+        // add values
+        for (int arrival : arrivals) {
+            boolean success = cuckooFilter.insert(arrival);
+            if (!success) {
+                System.out.println("Could not insert value: " + arrival);
+            }
+        }
+        // get a random value to test with
+        int randomValue = arrivals[(int) (Math.random() * arrivals.length)];
+        System.out.println("Random value: " + randomValue);
+        System.out.println("Random value is in the filter: " + cuckooFilter.contains(randomValue));
+        // delete the random value
+        cuckooFilter.delete(randomValue);
+        System.out.println("Random value is not in the filter: " + cuckooFilter.contains(randomValue));
+
+        // add the random value again
+        cuckooFilter.insert(randomValue);
+
+        //check FPR
+        int[] testValues = generateRandomArray(10000, 1000, 10000);
+        int falsePositives = 0;
+        for (int testValue : testValues) {
+            if (cuckooFilter.contains(testValue)) {
+                falsePositives++;
+            }
+        }
+        System.out.println("False positive rate: " + (double) falsePositives / testValues.length);
     }
 
     /**
