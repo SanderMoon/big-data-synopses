@@ -1,4 +1,5 @@
 import bloomfilters.BloomFilter;
+import bloomfilters.CountingBloomFilter;
 import exponentialhistograms.ExponentialHistogram;
 
 import java.util.Arrays;
@@ -9,7 +10,8 @@ public class Main {
 
     public static void main(String[] args) {
         //testExponentialHistograms();
-        testBloomFilter();
+        //testBloomFilter();
+        testCountingBloomFilter();
     }
 
     /**
@@ -52,6 +54,40 @@ public class Main {
         int falsePositives = 0;
         for (int i = 5000; i < 15000; i++) {
             if (bloomFilter.contains(i)) {
+                falsePositives++;
+            }
+        }
+        // FPR might be inaccurate, as we don't know the actual number of distinct values, estimation might be off
+        System.out.println("False positive rate: " + (double) falsePositives / 10000);
+    }
+
+    public static void testCountingBloomFilter(){
+        final var falsePositiveRate = 0.01;
+        int mean = 500;
+        int stdDev = 50;
+        // generate random data from a gaussian distribution (just an example)
+        int[] arrivals = generateRandomGaussians(10000, 500, 50);
+
+        // estimate the number of distinct values (definitely not accurate)
+        // We just need some estimation to calculate k and m
+        int estimationOfDistinctValues = estimateNumberOfDistinctValuesFromGaussian(mean, stdDev);
+        //randomly insert testing values into the arrivals
+        final var countingBloomFilter = new CountingBloomFilter(falsePositiveRate, estimationOfDistinctValues);
+
+        // test 1: add and remove a value
+        countingBloomFilter.add(666666);
+        System.out.println("666666 is in the filter: " + countingBloomFilter.contains(666666));
+        countingBloomFilter.remove(666666);
+        System.out.println("666666 is not in the filter: " + countingBloomFilter.contains(666666));
+
+        // test 2: add many values and calculate FPR
+        for (int arrival : arrivals) {
+            countingBloomFilter.add(arrival);
+        }
+
+        int falsePositives = 0;
+        for (int i = 5000; i < 15000; i++) {
+            if (countingBloomFilter.contains(i)) {
                 falsePositives++;
             }
         }

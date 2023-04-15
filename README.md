@@ -4,7 +4,7 @@ This repository contains a collection of simple implementations of synopses:
 - Exponential histograms
 - Count-min sketches (TODO)
 - Bloom filters 
-- Counting bloom filters (TODO)
+- Counting bloom filters
 - Flajolet-Martin sketches (TODO)
 
 Notes:
