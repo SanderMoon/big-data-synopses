@@ -1,3 +1,4 @@
+import bloomfilters.BloomFilter;
 import exponentialhistograms.ExponentialHistogram;
 
 import java.util.Arrays;
@@ -8,7 +9,8 @@ import static utils.Utils.prettyPrintHashMap;
 public class Main {
 
     public static void main(String[] args) {
-        testExponentialHistograms();
+        //testExponentialHistograms();
+        testBloomFilter();
     }
 
     /**
@@ -26,5 +28,17 @@ public class Main {
         System.out.println("Actual number of 1s: " + Arrays.stream(lastXarrivals).filter(i -> i == 1).count());
         System.out.println("Estimated number of 1s: " + histogram.getCountEstimation(window));
         System.out.println("buckets: " + prettyPrintHashMap(histogram.getBuckets()));
+    }
+
+    public static void testBloomFilter(){
+        int[] arrivals = generateRandomArray(1000, 0, 1000);
+        //randomly insert testing values into the arrivals
+        arrivals[arrivals.length/2] = 1001;
+        final var bloomFilter = new BloomFilter(100, 10);
+        for (int arrival : arrivals) {
+            bloomFilter.add(arrival);
+        }
+        System.out.println("1001 is in the filter: " + bloomFilter.contains(1001));
+        System.out.println("1002 is not in the filter: " + bloomFilter.contains(1002));
     }
 }
