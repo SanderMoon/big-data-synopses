@@ -29,9 +29,9 @@ public class BloomFilter {
      */
     public BloomFilter(double falsePositiveRate, int n) {
         // size of the bloom filter
-        int m = (int) Math.ceil(-n * Math.log(falsePositiveRate) / 0.6185);
+        int m = (int) Math.ceil(n * Math.log(falsePositiveRate) / Math.log(0.6185));
         // number of hash functions
-        int k = (int) Math.ceil(Math.log(2) * m / n);
+        int k = (int) Math.ceil(Math.log(2) * (m / n));
 
         this.bloomFilter = new boolean[m];
         this.hashFunctions = HashUtils.getHashFunctions(k);

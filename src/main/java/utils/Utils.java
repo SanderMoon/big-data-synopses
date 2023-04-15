@@ -40,8 +40,8 @@ public class Utils {
     }
 
     public static int estimateNumberOfDistinctValuesFromGaussian(double mean, double stdDev) {
-        double lowerBound = mean - 4 * stdDev;
-        double upperBound = mean + 4 * stdDev;
+        double lowerBound = mean - 3 * stdDev;
+        double upperBound = mean + 3 * stdDev;
         return (int) (upperBound - lowerBound + 1);
     }
 

@@ -21,9 +21,9 @@ public class CountingBloomFilter {
      */
     public CountingBloomFilter(double falsePositiveRate, int n) {
         // size of the bloom filter
-        int m = (int) Math.ceil(-n * Math.log(falsePositiveRate) / 0.6185);
+        int m = (int) Math.ceil(n * Math.log(falsePositiveRate) / Math.log(0.6185));
         // number of hash functions
-        int k = (int) Math.ceil(Math.log(2) * m / n);
+        int k = (int) Math.ceil(Math.log(2) * (m / n));
 
         this.countingBloomFilter = new short[m];
         this.hashFunctions = HashUtils.getHashFunctions(k);

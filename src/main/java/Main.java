@@ -10,8 +10,8 @@ public class Main {
 
     public static void main(String[] args) {
         //testExponentialHistograms();
-        //testBloomFilter();
-        testCountingBloomFilter();
+        testBloomFilter();
+        //testCountingBloomFilter();
     }
 
     /**
@@ -41,6 +41,8 @@ public class Main {
         // estimate the number of distinct values (definitely not accurate)
         // We just need some estimation to calculate k and m
         int estimationOfDistinctValues = estimateNumberOfDistinctValuesFromGaussian(mean, stdDev);
+        // or use int actualNumberOfDistinctValues = (int) Arrays.stream(arrivals).distinct().count();
+
         //randomly insert testing values into the arrivals
         arrivals[arrivals.length/2] = 666666;
         final var bloomFilter = new BloomFilter(falsePositiveRate, estimationOfDistinctValues);
