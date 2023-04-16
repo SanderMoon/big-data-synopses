@@ -12,7 +12,7 @@ public class FMsketch {
     final double scalingFactor = 1.3;
 
     public FMsketch(double epsilon, double delta){
-        // usually we caluldate the number of hash functions like this:
+        // usually we calculate the number of hash functions like this:
         // final var numberOfHashFunctions = (int) (1/ Math.pow(epsilon, 2) * Math.log(1/delta));
         // I dont have enough prime numbers for this, so i'm just going to hardcode it for this example
         // usually you would use many many hash functions
