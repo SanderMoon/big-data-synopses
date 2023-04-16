@@ -12,6 +12,7 @@ public class HashFunction {
     }
 
     public long hash(int value, int lengthMatrix){
+
         return (((x * value) + y) % z) % lengthMatrix;
     }
 }

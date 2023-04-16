@@ -1,5 +1,6 @@
 import bloomfilters.BloomFilter;
 import bloomfilters.CountingBloomFilter;
+import cmsketch.CountMinSketch;
 import cuckoofilters.CuckooFilter;
 import exponentialhistograms.ExponentialHistogram;
 
@@ -13,7 +14,26 @@ public class Main {
         //testExponentialHistograms();
         //testBloomFilter();
         //testCountingBloomFilter();
-        testCuckooFilter();
+        //testCuckooFilter();
+        testCountMinSketch();
+    }
+
+    private static void testCountMinSketch(){
+        int[] arrivals = generateRandomGaussians(10000, 500, 50);
+        final var epsilon = 0.01;
+        final var delta = 0.01;
+        final var countMinSketch = new CountMinSketch(epsilon, delta);
+        for (int arrival : arrivals) {
+            countMinSketch.add(arrival);
+        }
+        int randomValue = arrivals[(int) (Math.random() * arrivals.length)];
+        System.out.println("Random value: " + randomValue);
+        System.out.println("Estimated Count of random value: " + countMinSketch.count(randomValue));
+
+        // check actual value
+        int actualValue = (int) Arrays.stream(arrivals).filter(i -> i == randomValue).count();
+        System.out.println("Actual count of random value: " + actualValue);
+
     }
 
     private static void testCuckooFilter() {
