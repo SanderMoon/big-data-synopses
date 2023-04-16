@@ -1,10 +1,13 @@
 import bloomfilters.BloomFilter;
 import bloomfilters.CountingBloomFilter;
+import cmsketch.CMRangeSketch;
 import cmsketch.CountMinSketch;
 import cuckoofilters.CuckooFilter;
 import exponentialhistograms.ExponentialHistogram;
+import utils.DyadicIntervalCalculator;
 
 import java.util.Arrays;
+import java.util.List;
 
 import static utils.Utils.*;
 
@@ -15,7 +18,51 @@ public class Main {
         //testBloomFilter();
         //testCountingBloomFilter();
         //testCuckooFilter();
-        testCountMinSketch();
+        //testCountMinSketch();
+        //testDyadicIntervalCalculator();
+        testCMsketchRangeQueries();
+
+    }
+
+    public static void testCMsketchRangeQueries(){
+        final var epsilon = 0.001;
+        final var delta = 0.01;
+        final var domain = new int[]{1, 10000};
+        final var cmRangeSketch = new CMRangeSketch(epsilon, delta, domain);
+        // generate uniform integer data so we can easily test ranges. (just an example)
+        final var arrivals = new int[10000];
+        for (int i = 0; i < arrivals.length; i++) {
+            arrivals[i] = i + 1;
+        }
+        for (int arrival : arrivals) {
+            cmRangeSketch.updateSketches(arrival);
+        }
+        // get first 500 arrivals
+        final var range = new int[]{1, 500};
+        System.out.println("Range: " + Arrays.toString(range));
+        System.out.println("Actual count: " + Arrays.stream(arrivals).filter(i -> i >= range[0] && i <= range[1]).count());
+        System.out.println("Estimated count: " + cmRangeSketch.count(range));
+    }
+
+    public static void testDyadicIntervalCalculator(){
+        final var range = new int[]{2, 452};
+        final var intervals = DyadicIntervalCalculator.calculateDyadicIntervalsOverRange(range);
+        // print ranges
+        for (int[] interval : intervals) {
+            System.out.println(Arrays.toString(interval));
+        }
+
+        final var domain = new int[]{1, 1000};
+        final var domainIntervals = DyadicIntervalCalculator.calculateDyadicIntervalsOverDomain(domain);
+        // print ranges
+        for (List<int[]> interval : domainIntervals) {
+            for (int[] ints : interval) {
+                System.out.print(Arrays.toString(ints) + " ");
+            }
+            System.out.println();
+        }
+
+
     }
 
     private static void testCountMinSketch(){
