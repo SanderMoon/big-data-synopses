@@ -4,6 +4,7 @@ import cmsketch.CMRangeSketch;
 import cmsketch.CountMinSketch;
 import cuckoofilters.CuckooFilter;
 import exponentialhistograms.ExponentialHistogram;
+import fmsketches.FMsketch;
 import utils.DyadicIntervalCalculator;
 
 import java.util.Arrays;
@@ -20,8 +21,24 @@ public class Main {
         //testCuckooFilter();
         //testCountMinSketch();
         //testDyadicIntervalCalculator();
-        testCMsketchRangeQueries();
+        //testCMsketchRangeQueries();
+        testFMsketch();
 
+    }
+
+    public static void testFMsketch(){
+        final var epsilon = 0.1;
+        final var delta = 0.1;
+        final var FMSketch = new FMsketch(epsilon, delta);
+        final var arrivals = new int[10000];
+        for (int i = 0; i < arrivals.length; i++) {
+            arrivals[i] = i + 1;
+        }
+        for (int arrival : arrivals) {
+            FMSketch.add(arrival);
+        }
+        System.out.println("Actual count: " + arrivals.length);
+        System.out.println("Estimated count: " + FMSketch.countDistinct());
     }
 
     public static void testCMsketchRangeQueries(){
